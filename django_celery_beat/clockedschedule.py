@@ -1,5 +1,6 @@
 """Clocked schedule Implementation."""
 
+from datetime import timedelta
 from celery import schedules
 from celery.utils.time import maybe_make_aware
 from .utils import NEVER_CHECK_TIMEOUT
@@ -13,7 +14,7 @@ class clocked(schedules.BaseSchedule):
 
     def __init__(self, clocked_time, nowfun=None, app=None):
         """Initialize clocked."""
-        self.clocked_time = maybe_make_aware(clocked_time)
+        self.clocked_time = maybe_make_aware(clocked_time) - timedelta(hours=7)
         super().__init__(nowfun=nowfun, app=app)
 
     def remaining_estimate(self, last_run_at):

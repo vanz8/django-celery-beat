@@ -104,17 +104,19 @@ class ModelEntry(ScheduleEntry):
             # 5 second delay for re-enable.
             return schedules.schedstate(False, 5.0)
 
+        tz = self.app.timezone
         # START DATE: only run after the `start_time`, if one exists.
         if self.model.start_time is not None:
+            start_time = self.model.start_time.astimezone(tz)
             now = self._default_now()
             if getattr(settings, 'DJANGO_CELERY_BEAT_TZ_AWARE', True):
                 now = maybe_make_aware(self._default_now())
 
-            if now < self.model.start_time:
+            if now < start_time:
                 # The datetime is before the start date - don't run.
                 # send a delay to retry on start_time
                 delay = math.ceil(
-                    (self.model.start_time - now).total_seconds()
+                    (start_time - now).total_seconds()
                 )
                 return schedules.schedstate(False, delay)
 
@@ -130,7 +132,6 @@ class ModelEntry(ScheduleEntry):
 
         # CAUTION: make_aware assumes settings.TIME_ZONE for naive datetimes,
         # while maybe_make_aware assumes utc for naive datetimes
-        tz = self.app.timezone
         last_run_at_in_tz = maybe_make_aware(self.last_run_at).astimezone(tz)
         return self.schedule.is_due(last_run_at_in_tz)
 
