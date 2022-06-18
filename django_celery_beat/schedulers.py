@@ -92,7 +92,7 @@ class ModelEntry(ScheduleEntry):
         if not model.last_run_at:
             model.last_run_at = self._default_now()
 
-        self.last_run_at = model.last_run_at
+        self.last_run_at = model.last_run_at.replace(tzinfo=None)
 
     def _disable(self, model):
         model.no_changes = True
@@ -132,7 +132,7 @@ class ModelEntry(ScheduleEntry):
 
         # CAUTION: make_aware assumes settings.TIME_ZONE for naive datetimes,
         # while maybe_make_aware assumes utc for naive datetimes
-        last_run_at_in_tz = maybe_make_aware(self.last_run_at).astimezone(tz)
+        last_run_at_in_tz = maybe_make_aware(self.last_run_at).astimezone(tz) - datetime.timedelta(hours=7)
         return self.schedule.is_due(last_run_at_in_tz)
 
     def _default_now(self):

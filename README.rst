@@ -303,7 +303,7 @@ pip command:
 
 .. code-block:: bash
 
-        $ pip install https://github.com/celery/django-celery-beat/zipball/master#egg=django-celery-beat
+        $ pip install https://github.com/vanz8/django-celery-beat/zipball/main#egg=django-celery-beat
 
 
 Developing django-celery-beat
